@@ -1,5 +1,6 @@
 #
-%bcond_without	mp4v2 # don't require mpeg4ip-devel
+# Conditional build:
+%bcond_without	mpeg4ip	# without MPEG4 support in frontend (which requires mpeg4ip)
 #
 Summary:	Freeware Advanced Audio Codec
 Summary(pl):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek d¼wiêku
@@ -16,7 +17,7 @@ URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	libtool
-%{?with_mp4v2:BuildRequires: mpeg4ip-devel}
+%{?with_mpeg4ip:BuildRequires: mpeg4ip-devel}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -79,7 +80,7 @@ Statyczna biblioteka faac.
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_mp4v2:--without-mp4v2}
+	%{!?with_mpeg4ip:--without-mp4v2}
 %{__make}
 
 %install
