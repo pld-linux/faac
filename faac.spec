@@ -17,7 +17,7 @@ URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	libtool
-%{?with_mpeg4ip:BuildRequires: mpeg4ip-devel}
+%{?with_mpeg4ip:BuildRequires:	mpeg4ip-devel}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
