@@ -1,12 +1,3 @@
---- faac/frontend/Makefile.am.orig	2003-10-17 18:41:34.000000000 +0200
-+++ faac/frontend/Makefile.am	2004-02-09 21:50:43.189536056 +0100
-@@ -3,6 +3,5 @@
- faac_SOURCES = main.c input.c
- 
- INCLUDES = -I$(top_srcdir)/include 
--LDFLAGS = -s
- LDADD = $(top_builddir)/libfaac/libfaac.la -lm
- 
 --- faac/libfaac/Makefile.am.orig	2003-10-17 18:41:05.000000000 +0200
 +++ faac/libfaac/Makefile.am	2004-02-09 21:50:24.505376480 +0100
 @@ -2,6 +2,7 @@
@@ -17,3 +8,24 @@
  
  INCLUDES = -I$(top_srcdir)/include
  
+--- faac/frontend/Makefile.am.orig	2004-03-24 12:00:40.000000000 +0100
++++ faac/frontend/Makefile.am	2004-04-23 22:13:07.649197000 +0200
+@@ -3,5 +3,5 @@
+ faac_SOURCES = main.c input.c
+ 
+ INCLUDES = -I$(top_srcdir)/include 
+-LDADD = $(top_builddir)/libfaac/libfaac.la -lm
++LDADD = $(top_builddir)/libfaac/libfaac.la $(MP4LIBS) -lm
+ 
+--- faac/configure.in.orig	2004-04-16 11:49:09.000000000 +0200
++++ faac/configure.in	2004-04-23 22:12:27.599285512 +0200
+@@ -24,7 +24,8 @@
+ AC_CHECK_LIB(mp4v2, MP4MetadataDelete,
+ 		    [AC_MSG_NOTICE([*** Building with MP4 support ***])
+ 		     MY_DEFINE([HAVE_LIBMP4V2])
+-		     LIBS="$LIBS -lstdc++ -lmp4v2"],
++		     MP4LIBS="-lmp4v2"],
+ 		     [AC_MSG_NOTICE([*** Building without MP4 support ***])],
+ 		     -lstdc++)
++AC_SUBST(MP4LIBS)
+ AC_C_BIGENDIAN
