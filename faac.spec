@@ -6,7 +6,7 @@ Summary:	Freeware Advanced Audio Codec
 Summary(pl):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek d¼wiêku
 Name:		faac
 Version:	1.24
-Release:	2
+Release:	3
 License:	LGPL v2.1+
 Group:		Applications/Sound
 Source0:	http://dl.sourceforge.net/faac/%{name}-%{version}.tar.gz
