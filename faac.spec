@@ -5,17 +5,17 @@
 Summary:	Freeware Advanced Audio Codec
 Summary(pl):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek d¼wiêku
 Name:		faac
-Version:	1.24
-Release:	3
+Version:	1.25
+Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
 Source0:	http://dl.sourceforge.net/faac/%{name}-%{version}.tar.gz
-# Source0-md5:	191a457d0a7139792e5dc0c5b607b6f1
+# Source0-md5:	75eaffd18ee072eaca52ae2d622bb1db
 Patch0:		%{name}-link.patch
-Patch1:		%{name}-force_to_use_without-mp4v2.patch
 URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	dos2unix
 BuildRequires:	libtool
 %{?with_mpeg4ip:BuildRequires:	mpeg4ip-devel}
 Requires:	%{name}-libs = %{version}-%{release}
@@ -71,7 +71,9 @@ Statyczna biblioteka faac.
 %prep
 %setup -q -n %{name}
 %patch0 -p1
-%patch1 -p1
+
+# aclocal can't stand it
+dos2unix configure.in
 
 %build
 %{__libtoolize}
