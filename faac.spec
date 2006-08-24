@@ -1,6 +1,7 @@
 #
 # Conditional build:
-%bcond_without	mpeg4ip	# without MPEG4 support in frontend (which requires mpeg4ip)
+%bcond_without	mpeg4ip		# without MPEG4 support in frontend (which requires mpeg4ip)
+%bcond_without	static_libs	# don't build static libraries
 #
 Summary:	Freeware Advanced Audio Codec
 Summary(pl):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek d¼wiêku
@@ -82,7 +83,8 @@ dos2unix configure.in
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_mpeg4ip:--without-mp4v2}
+	%{!?with_mpeg4ip:--without-mp4v2} \
+	%{!?with_static_libs:--disable-static}
 %{__make}
 
 %install
@@ -113,6 +115,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.la
 %{_includedir}/*.h
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+%endif
