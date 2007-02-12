@@ -4,7 +4,7 @@
 %bcond_without	static_libs	# don't build static libraries
 #
 Summary:	Freeware Advanced Audio Codec
-Summary(pl.UTF-8):   Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
+Summary(pl.UTF-8):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
 Name:		faac
 Version:	1.25
 Release:	1
@@ -33,7 +33,7 @@ dźwięku).
 
 %package libs
 Summary:	Freeware Advanced Audio Codec library
-Summary(pl.UTF-8):   Freeware Advanced Audio Codec - biblioteka darmowego zaawansowanego kodeka dźwięku
+Summary(pl.UTF-8):	Freeware Advanced Audio Codec - biblioteka darmowego zaawansowanego kodeka dźwięku
 Group:		Libraries
 
 %description libs
@@ -47,7 +47,7 @@ dźwięku).
 
 %package devel
 Summary:	Header files for faac library
-Summary(pl.UTF-8):   Pliki nagłówkowe biblioteki faac
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki faac
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -59,7 +59,7 @@ Pliki nagłówkowe biblioteki faac.
 
 %package static
 Summary:	Static faac library
-Summary(pl.UTF-8):   Statyczna biblioteka faac
+Summary(pl.UTF-8):	Statyczna biblioteka faac
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
