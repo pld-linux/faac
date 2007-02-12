@@ -4,7 +4,7 @@
 %bcond_without	static_libs	# don't build static libraries
 #
 Summary:	Freeware Advanced Audio Codec
-Summary(pl):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek d¼wiêku
+Summary(pl.UTF-8):   Freeware Advanced Audio Codec - darmowy zaawansowany kodek dÅºwiÄ™ku
 Name:		faac
 Version:	1.25
 Release:	1
@@ -26,47 +26,47 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 FAAC is an ISO/MPEG 2/4 AAC encoder library developed for the Freeware
 Advanced Audio Coding project.
 
-%description -l pl
+%description -l pl.UTF-8
 FAAC to biblioteka kodera ISO/MPEG 2/4 AAC stworzona dla projektu
 Freeware Advanced Audio Coding (darmowego zaawansowanego kodowania
-d¼wiêku).
+dÅºwiÄ™ku).
 
 %package libs
 Summary:	Freeware Advanced Audio Codec library
-Summary(pl):	Freeware Advanced Audio Codec - biblioteka darmowego zaawansowanego kodeka d¼wiêku
+Summary(pl.UTF-8):   Freeware Advanced Audio Codec - biblioteka darmowego zaawansowanego kodeka dÅºwiÄ™ku
 Group:		Libraries
 
 %description libs
 FAAC is an ISO/MPEG 2/4 AAC encoder library developed for the Freeware
 Advanced Audio Coding project.
 
-%description libs -l pl
+%description libs -l pl.UTF-8
 FAAC to biblioteka kodera ISO/MPEG 2/4 AAC stworzona dla projektu
 Freeware Advanced Audio Coding (darmowego zaawansowanego kodowania
-d¼wiêku).
+dÅºwiÄ™ku).
 
 %package devel
 Summary:	Header files for faac library
-Summary(pl):	Pliki nag³ówkowe biblioteki faac
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe biblioteki faac
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 Header files for faac library.
 
-%description devel -l pl
-Pliki nag³ówkowe biblioteki faac.
+%description devel -l pl.UTF-8
+Pliki nagÅ‚Ã³wkowe biblioteki faac.
 
 %package static
 Summary:	Static faac library
-Summary(pl):	Statyczna biblioteka faac
+Summary(pl.UTF-8):   Statyczna biblioteka faac
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static faac library.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Statyczna biblioteka faac.
 
 %prep
