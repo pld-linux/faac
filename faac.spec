@@ -6,12 +6,12 @@
 Summary:	Freeware Advanced Audio Codec
 Summary(pl.UTF-8):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
 Name:		faac
-Version:	1.26
+Version:	1.28
 Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
 Source0:	http://dl.sourceforge.net/faac/%{name}-%{version}.tar.gz
-# Source0-md5:	1d7c019bd2dbb4f3101b8937ebc59cf6
+# Source0-md5:	80763728d392c7d789cde25614c878f6
 Patch0:		%{name}-link.patch
 URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
@@ -70,7 +70,7 @@ Static faac library.
 Statyczna biblioteka faac.
 
 %prep
-%setup -q -n %{name}
+%setup -q
 %patch0 -p1
 
 # aclocal can't stand it
@@ -102,6 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
+%{_mandir}/man1/*
 
 %files libs
 %defattr(644,root,root,755)
