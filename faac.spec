@@ -101,8 +101,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
-%{_mandir}/man1/*
+%attr(755,root,root) %{_bindir}/faac
+%{_mandir}/man1/faac.1*
 
 %files libs
 %defattr(644,root,root,755)
