@@ -1,0 +1,127 @@
+--- faac-1.28/common/mp4v2/mpeg4ip.h.orig	2009-01-26 23:42:35.000000000 +0100
++++ faac-1.28/common/mp4v2/mpeg4ip.h	2012-12-09 11:31:38.323778806 +0100
+@@ -120,14 +120,6 @@
+ #endif
+ #include <sys/param.h>
+ 
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-char *strcasestr(const char *haystack, const char *needle);
+-#ifdef __cplusplus
+-}
+-#endif
+-
+ #define OPEN_RDWR O_RDWR
+ #define OPEN_CREAT O_CREAT 
+ #define OPEN_RDONLY O_RDONLY
+--- faac-1.28/configure.in.orig	2012-12-09 12:19:05.860386121 +0100
++++ faac-1.28/configure.in	2012-12-09 12:19:43.350385339 +0100
+@@ -30,10 +30,10 @@
+ AM_CONDITIONAL(WITH_MP4V2, false)
+ AM_CONDITIONAL(WITH_EXT_MP4V2, false)
+ 
+-AC_CHECK_DECLS([MP4Create, MP4MetadataDelete],
+-               AC_CHECK_LIB(mp4v2, MP4MetadataDelete, external_mp4v2=yes,
++AC_CHECK_DECLS([MP4Create],
++               AC_CHECK_LIB(mp4v2, MP4Create, external_mp4v2=yes,
+                             external_mp4v2=no, -lstdc++),
+-               external_mp4v2=no, [#include <mp4.h>])
++               external_mp4v2=no, [#include <mp4v2/mp4v2.h>])
+ 
+ if test x$external_mp4v2 = xyes; then
+   AC_MSG_NOTICE([*** Building with external mp4v2 ***])
+--- faac-1.28/frontend/main.c.orig	2009-01-24 02:10:20.000000000 +0100
++++ faac-1.28/frontend/main.c	2012-12-09 21:39:29.046351971 +0100
+@@ -30,7 +30,7 @@
+ #endif
+ 
+ #ifdef HAVE_LIBMP4V2
+-# include <mp4.h>
++# include <mp4v2/mp4v2.h>
+ #endif
+ 
+ #define DEFAULT_TNS     0
+@@ -870,7 +870,7 @@
+     if (!faacEncSetConfiguration(hEncoder, myFormat)) {
+         fprintf(stderr, "Unsupported output format!\n");
+ #ifdef HAVE_LIBMP4V2
+-        if (container == MP4_CONTAINER) MP4Close(MP4hFile);
++        if (container == MP4_CONTAINER) MP4Close(MP4hFile, 0);
+ #endif
+         return 1;
+     }
+@@ -882,13 +882,8 @@
+         unsigned long ASCLength = 0;
+     char *version_string;
+ 
+-#ifdef MP4_CREATE_EXTENSIBLE_FORMAT
+-    /* hack to compile against libmp4v2 >= 1.0RC3
+-     * why is there no version identifier in mp4.h? */
+-        MP4hFile = MP4Create(aacFileName, MP4_DETAILS_ERROR, 0);
+-#else
+-    MP4hFile = MP4Create(aacFileName, MP4_DETAILS_ERROR, 0, 0);
+-#endif
++    MP4hFile = MP4Create(aacFileName, 0);
++
+         if (!MP4_IS_VALID_FILE_HANDLE(MP4hFile)) {
+             fprintf(stderr, "Couldn't create output file %s\n", aacFileName);
+             return 1;
+@@ -901,27 +896,31 @@
+         MP4SetTrackESConfiguration(MP4hFile, MP4track, ASC, ASCLength);
+     free(ASC);
+ 
++    const MP4Tags *tags = MP4TagsAlloc();
+     /* set metadata */
+     version_string = malloc(strlen(faac_id_string) + 6);
+     strcpy(version_string, "FAAC ");
+     strcpy(version_string + 5, faac_id_string);
+-    MP4SetMetadataTool(MP4hFile, version_string);
++    MP4TagsSetEncodingTool(tags, version_string);
+     free(version_string);
+ 
+-    if (artist) MP4SetMetadataArtist(MP4hFile, artist);
+-    if (writer) MP4SetMetadataWriter(MP4hFile, writer);
+-    if (title) MP4SetMetadataName(MP4hFile, title);
+-    if (album) MP4SetMetadataAlbum(MP4hFile, album);
+-    if (trackno > 0) MP4SetMetadataTrack(MP4hFile, trackno, ntracks);
+-    if (discno > 0) MP4SetMetadataDisk(MP4hFile, discno, ndiscs);
+-    if (compilation) MP4SetMetadataCompilation(MP4hFile, compilation);
+-    if (year) MP4SetMetadataYear(MP4hFile, year);
+-    if (genre) MP4SetMetadataGenre(MP4hFile, genre);
+-    if (comment) MP4SetMetadataComment(MP4hFile, comment);
++    if (artist) MP4TagsSetArtist(tags, artist);
++    if (writer) MP4TagsSetComposer(tags, writer);
++    if (title) MP4TagsSetName(tags, title);
++    if (album) MP4TagsSetAlbum(tags, album);
++    if (trackno > 0) { MP4TagTrack track = { .index = trackno, .total = ntracks }; MP4TagsSetTrack(tags, &track); }
++    if (discno > 0) { MP4TagDisk disk = { .index = discno, .total = ndiscs }; MP4TagsSetDisk(tags, &disk); }
++    if (compilation) MP4TagsSetCompilation(tags, &compilation);
++    if (year) MP4TagsSetReleaseDate(tags, year);
++    if (genre) MP4TagsSetGenre(tags, genre);
++    if (comment) MP4TagsSetComments(tags, comment);
+         if (artSize) {
+-        MP4SetMetadataCoverArt(MP4hFile, art, artSize);
++	MP4TagArtwork artwork = { .data = art, .size = artSize, .type = MP4_ART_UNDEFINED };
++        MP4TagsAddArtwork(tags, &artwork);
+         free(art);
+     }
++	MP4TagsStore(tags, MP4hFile);
++	MP4TagsFree(tags);
+     }
+     else
+     {
+@@ -1138,11 +1137,11 @@
+         /* clean up */
+         if (container == MP4_CONTAINER)
+         {
+-            MP4Close(MP4hFile);
++            MP4Close(MP4hFile, 0);
+             if (optimizeFlag == 1)
+             {
+                 fprintf(stderr, "\n\nMP4 format optimization... ");
+-                MP4Optimize(aacFileName, NULL, 0);
++                MP4Optimize(aacFileName, NULL);
+                 fprintf(stderr, "Done!");
+             }
+         } else

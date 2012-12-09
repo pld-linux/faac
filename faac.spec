@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	mpeg4ip		# without MPEG4 support in frontend (which requires mpeg4ip)
+%bcond_without	mp4v2		# without MPEG4 support in frontend (which requires mp4v2)
 %bcond_without	static_libs	# don't build static libraries
 #
 Summary:	Freeware Advanced Audio Codec
@@ -13,13 +13,13 @@ Group:		Applications/Sound
 Source0:	http://downloads.sourceforge.net/faac/%{name}-%{version}.tar.gz
 # Source0-md5:	80763728d392c7d789cde25614c878f6
 Patch0:		%{name}-link.patch
-Patch1:		%{name}-mpeg4ip.patch
+Patch1:		%{name}-mp4v2.patch
 URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	dos2unix
 BuildRequires:	libtool
-%{?with_mpeg4ip:BuildRequires:	mpeg4ip-devel}
+%{?with_mp4v2:BuildRequires:	mp4v2-devel >= 2.0.0}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -75,9 +75,6 @@ Statyczna biblioteka faac.
 %patch0 -p1
 %patch1 -p1
 
-# aclocal can't stand it
-dos2unix configure.in
-
 %build
 %{__libtoolize}
 %{__aclocal}
@@ -85,7 +82,7 @@ dos2unix configure.in
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_mpeg4ip:--without-mp4v2} \
+	%{!?with_mp4v2:--without-mp4v2} \
 	%{!?with_static_libs:--disable-static}
 %{__make}
 
