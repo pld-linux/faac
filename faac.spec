@@ -10,9 +10,10 @@ Version:	1.28
 Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/faac/%{name}-%{version}.tar.gz
+Source0:	http://downloads.sourceforge.net/faac/%{name}-%{version}.tar.gz
 # Source0-md5:	80763728d392c7d789cde25614c878f6
 Patch0:		%{name}-link.patch
+Patch1:		%{name}-mpeg4ip.patch
 URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -72,6 +73,7 @@ Statyczna biblioteka faac.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 # aclocal can't stand it
 dos2unix configure.in
