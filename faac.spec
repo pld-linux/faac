@@ -1,26 +1,21 @@
 #
 # Conditional build:
-%bcond_without	mp4v2		# without MPEG4 support in frontend (which requires mp4v2)
 %bcond_without	static_libs	# don't build static libraries
 #
 Summary:	Freeware Advanced Audio Codec
 Summary(pl.UTF-8):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
 Name:		faac
-Version:	1.28
-Release:	3
+Version:	1.29.9.2
+Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
 Source0:	http://downloads.sourceforge.net/faac/%{name}-%{version}.tar.gz
-# Source0-md5:	80763728d392c7d789cde25614c878f6
-Patch0:		%{name}-link.patch
-Patch1:		%{name}-mp4v2.patch
-Patch2:		format-security.patch
+# Source0-md5:	2b58d621fad8fda879f07b7cad8bfe10
 URL:		http://www.audiocoding.com/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	dos2unix
 BuildRequires:	libtool
-%{?with_mp4v2:BuildRequires:	mp4v2-devel >= 2.0.0}
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -73,9 +68,6 @@ Statyczna biblioteka faac.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %build
 %{__libtoolize}
@@ -84,7 +76,6 @@ Statyczna biblioteka faac.
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_mp4v2:--without-mp4v2} \
 	%{!?with_static_libs:--disable-static}
 %{__make}
 
@@ -107,13 +98,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libs
 %defattr(644,root,root,755)
-%doc ChangeLog README TODO docs/faac.html
+%doc AUTHORS ChangeLog NEWS README TODO
 %attr(755,root,root) %{_libdir}/libfaac.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libfaac.so.0
 
 %files devel
 %defattr(644,root,root,755)
-%doc docs/libfaac.html
 %attr(755,root,root) %{_libdir}/libfaac.so
 %{_libdir}/libfaac.la
 %{_includedir}/faac*.h
