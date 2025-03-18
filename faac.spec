@@ -1,20 +1,23 @@
 #
 # Conditional build:
-%bcond_without	static_libs	# don't build static libraries
-#
+%bcond_without	static_libs	# static libraries
+%bcond_with	sse2		# SSE2 instructions
+
+%ifarch %{x8664} x32 pentium4
+%define	with_sse2	1
+%endif
 Summary:	Freeware Advanced Audio Codec
 Summary(pl.UTF-8):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
 Name:		faac
-Version:	1.30
-%define	tag_ver	%(echo %{version} | tr . _)
+Version:	1.31.1
 Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
-# also https://github.com/knik0/faac/releases
-Source0:	http://downloads.sourceforge.net/faac/%{name}-%{tag_ver}.tar.gz
-# Source0-md5:	8d61e6d55088e599aa91532d5e6995b0
-URL:		http://www.audiocoding.com/
-BuildRequires:	autoconf >= 2.50
+#Source0Download: https://github.com/knik0/faac/releases
+Source0:	https://github.com/knik0/faac/archive/faac-%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	a3f8194516769cfc3f8743364cc57824
+URL:		https://faac.sourceforge.net/
+BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
 BuildRequires:	dos2unix
 BuildRequires:	libtool
@@ -69,7 +72,11 @@ Static faac library.
 Statyczna biblioteka faac.
 
 %prep
-%setup -q -n faac-%{tag_ver}
+%setup -q -n faac-faac-%{version}
+
+%if %{without sse2}
+%{__sed} -i -e '/^common_CFLAGS += -msse2$/d' libfaac/Makefile.am
+%endif
 
 %build
 %{__libtoolize}
@@ -87,6 +94,9 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+# obsoleted by pkg-config
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libfaac*.la
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -102,16 +112,20 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README TODO
 %attr(755,root,root) %{_libdir}/libfaac.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libfaac.so.0
+%ghost %{_libdir}/libfaac.so.0
+%attr(755,root,root) %{_libdir}/libfaac_drm.so.*.*.*
+%ghost %{_libdir}/libfaac_drm.so.0
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libfaac.so
-%{_libdir}/libfaac.la
+%{_libdir}/libfaac.so
+%{_libdir}/libfaac_drm.so
 %{_includedir}/faac*.h
+%{_pkgconfigdir}/faac.pc
 
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libfaac.a
+%{_libdir}/libfaac_drm.a
 %endif
