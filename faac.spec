@@ -9,18 +9,18 @@
 Summary:	Freeware Advanced Audio Codec
 Summary(pl.UTF-8):	Freeware Advanced Audio Codec - darmowy zaawansowany kodek dźwięku
 Name:		faac
-Version:	1.31.1
+Version:	1.50
 Release:	1
 License:	LGPL v2.1+
 Group:		Applications/Sound
 #Source0Download: https://github.com/knik0/faac/releases
 Source0:	https://github.com/knik0/faac/archive/faac-%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	a3f8194516769cfc3f8743364cc57824
+# Source0-md5:	10a90885ef4d6b521b22e9ed7ecf9992
 URL:		https://faac.sourceforge.net/
-BuildRequires:	autoconf >= 2.69
-BuildRequires:	automake
+BuildRequires:	meson
+BuildRequires:	ninja >= 1.5
 BuildRequires:	dos2unix
-BuildRequires:	libtool
+BuildRequires:	rpmbuild(macros) >= 2.042
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -75,27 +75,18 @@ Statyczna biblioteka faac.
 %setup -q -n faac-faac-%{version}
 
 %if %{without sse2}
-%{__sed} -i -e '/^common_CFLAGS += -msse2$/d' libfaac/Makefile.am
+%{__sed} -i -e '/set(.HAVE_SSE2./ s/, (cpu_family.*/, false)/' meson.build
 %endif
 
 %build
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	%{!?with_static_libs:--disable-static}
-%{__make}
+%meson
+
+%meson_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-# obsoleted by pkg-config
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libfaac*.la
+%meson_install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -111,15 +102,13 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README TODO
-%attr(755,root,root) %{_libdir}/libfaac.so.*.*.*
+%{_libdir}/libfaac.so.*.*.*
 %ghost %{_libdir}/libfaac.so.0
-%attr(755,root,root) %{_libdir}/libfaac_drm.so.*.*.*
-%ghost %{_libdir}/libfaac_drm.so.0
 
 %files devel
 %defattr(644,root,root,755)
+%doc docs/libfaac.html
 %{_libdir}/libfaac.so
-%{_libdir}/libfaac_drm.so
 %{_includedir}/faac*.h
 %{_pkgconfigdir}/faac.pc
 
@@ -127,5 +116,4 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libfaac.a
-%{_libdir}/libfaac_drm.a
 %endif
